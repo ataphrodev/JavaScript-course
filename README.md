@@ -21,9 +21,12 @@ javascript/
 
 ## Lessons
 
-| #  | File                                       | Topic                                |
-|----|--------------------------------------------|--------------------------------------|
-| 00 | [00-helloworld.js](src/00-helloworld.js)   | Hello world, data types, operators   |
+| #  | File                                                      | Topic                                |
+|----|-----------------------------------------------------------|--------------------------------------|
+| 00 | [00-helloworld.js](src/00-helloworld.js)                  | Hello world, data types, operators   |
+| 01 | [01-variables.js] (src/01-variables.js)                   | Variables (var, let, const)          |
+| 02 | [02-datatypes.js] (src/02-datatypes.js)                   | Data types                           |
+| 03 | [03-beginner-exercises.js] (src/03-beginner-exercises.js) | Beginner exercises                   |
 
 ## How to run
 
