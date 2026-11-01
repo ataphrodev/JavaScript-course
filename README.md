@@ -24,16 +24,18 @@ javascript/
 | #  | File                                                      | Topic                                |
 |----|-----------------------------------------------------------|--------------------------------------|
 | 00 | [00-helloworld.js](src/00-helloworld.js)                  | Hello world, data types, operators   |
-| 01 | [01-variables.js] (src/01-variables.js)                   | Variables (var, let, const)          |
-| 02 | [02-datatypes.js] (src/02-datatypes.js)                   | Data types                           |
-| 03 | [03-beginner-exercises.js] (src/03-beginner-exercises.js) | Beginner exercises                   |
+| 01 | [01-variables.js](src/01-variables.js)                    | Variables (var, let, const)          |
+| 02 | [02-datatypes.js](src/02-datatypes.js)                    | Data types                           |
+| 03 | [03-beginner-exercises.js](src/03-beginner-exercises.js)  | Beginner exercises                   |
 
 ## How to run
 
 You need [Node.js](https://nodejs.org) installed. Then, from the project root:
 
 ```bash
-node src/00-helloworld.js
+node src/<file>.js
+# Example:
+node src/03-beginner-exercises.js
 ```
 
 ## Resources
