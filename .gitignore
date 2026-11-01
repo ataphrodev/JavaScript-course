@@ -1,0 +1,12 @@
+# Course material (copyrighted, do not publish)
+docs/*.pdf
+
+# Build output
+dist/
+
+# Editor temporary files
+*.swp
+.vscode/
+
+# OS files
+.DS_Store
