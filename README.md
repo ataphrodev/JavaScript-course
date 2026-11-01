@@ -1,4 +1,4 @@
-# JavaScript from Scratch
+# JavaScript course
 
 My personal repository for learning JavaScript, following the course
 **"JavaScript desde 0"** by [MoureDev](https://mouredev.pro).
