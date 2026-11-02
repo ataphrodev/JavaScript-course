@@ -27,6 +27,8 @@ javascript/
 | 01 | [01-variables.js](src/01-variables.js)                    | Variables (var, let, const)          |
 | 02 | [02-datatypes.js](src/02-datatypes.js)                    | Data types                           |
 | 03 | [03-beginner-exercises.js](src/03-beginner-exercises.js)  | Beginner exercises                   |
+| 04 | [04-operators.js](src/04-operators.js)                    | Operators                            |
+| 05 | [05-operators-exercises.js](src/05-operators-exercises.js)| Operators exercises                  |
 
 ## How to run
 
