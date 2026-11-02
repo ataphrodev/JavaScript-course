@@ -85,4 +85,4 @@ x = "Félix"
 y = "Xiana"
 
 const totalLetters = x.length + y.length
-console.log(totalLetters >= 10 && x.length === y.length) // false, la longitud de sumNames es mayor que 10 pero x e y no tienen la misma longitud -> true && true = true
+console.log(totalLetters >= 10 && x.length === y.length) // true, la longitud de totalLetters es mayor que 10 y x e y tienen la misma longitud -> true && true = true
