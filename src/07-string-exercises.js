@@ -3,19 +3,25 @@ const str1 = "Hola, "
 const str2 = "mundo!"
 
 console.log(str1+str2)
+
 // 2. Muestra la longitud de una cadena de texto.
 console.log(str1.length)
+
 // 3. Muestra el primer y último carácter de un string.
 console.log(str2[0], str2[str2.length - 1])
+
 // 4. Convierte a mayúsculas y minúsculas un string.
 const upperStr = str1.toUpperCase()
 console.log(upperStr)
+
 // 5. Crea una cadena de texto en varias líneas.
 const str3 = `Esto es una
 cadena de texto
 en varias líneas.`
+
 // 6. Interpola el valor de una variable en un string.
 console.log(`Interpolando el valor de str1 ${str1}, y ahora de str2 ${str2}. Bummmmmm`)
+
 // 7. Reemplaza todos los espacios en blanco de un string por guiones.
 /*
     Tenemos dos formas de hacerlo:
