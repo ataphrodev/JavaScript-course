@@ -29,7 +29,8 @@ javascript/
 | 03 | [03-beginner-exercises.js](src/03-beginner-exercises.js)  | Beginner exercises                   |
 | 04 | [04-operators.js](src/04-operators.js)                    | Operators                            |
 | 05 | [05-operators-exercises.js](src/05-operators-exercises.js)| Operators exercises                  |
-| 06 | [06-kata-box-office.js](src/06-kata-box-office.js)        | Kata: box office
+| 06 | [06-kata-box-office.js](src/06-kata-box-office.js)        | Kata: box office                     |
+| 07 | [07-kata-rpg-combat.js](src/07-kata-rpg-combat.js)        | Kata: rpg combat                     |
 
 ## How to run
 
