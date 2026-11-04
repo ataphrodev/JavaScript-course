@@ -5,6 +5,8 @@ Las entradas nuevas se añaden arriba del todo.
 
 ## Índice rápido
 
+- [`switch` o `if`: cuándo usar cada uno](#switch-o-if-cuándo-usar-cada-uno)
+- [`includes("")` siempre es `true`](#includes-siempre-es-true)
 - [`===` frente a `==`](#-frente-a-)
 - [`typeof` va delante de la variable](#typeof-va-delante-de-la-variable)
 - [`&&` se evalúa antes que `||`](#-se-evalúa-antes-que-)
@@ -15,6 +17,38 @@ Las entradas nuevas se añaden arriba del todo.
 - [Una variable, un solo tipo](#una-variable-un-solo-tipo)
 
 ---
+
+## `switch` o `if`: cuándo usar cada uno
+*2026-11-05*
+
+- `switch` encaja cuando comparas **una misma variable** con **muchos valores concretos** (códigos de estado, roles, meses).
+- `if / else if / else` encaja cuando hay pocas situaciones o condiciones distintas (rangos, `&&`, `||`).
+- Si dentro de un `switch` solo tienes un `case` y un `default`, probablemente sobra el `switch`.
+
+```js
+// Muchos valores de una variable: switch
+switch (statusCode) { case 401: /* ... */ break }
+
+// Tres situaciones distintas: if
+if (!isFormValid) { /* ... */ } else if (statusCode === 200) { /* ... */ } else { /* ... */ }
+```
+
+Docs: [switch](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/switch) · [if...else](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/if...else)
+
+## `includes("")` siempre es `true`
+*2026-11-05*
+
+- Todo texto contiene la cadena vacía, así que `texto.includes("")` es `true` siempre, incluso con `""`.
+- No uses `includes` para saber si un texto está vacío o tiene contenido: compara con `=== ""` o `!== ""`.
+- Tampoco uses `includes(" ")` como marca de "vacío": cualquier frase con espacios, como `"Email no válido"`, lo contiene.
+
+```js
+"abc".includes("")      // true
+redirectUrl !== ""      // correcto: "no está vacío"
+!redirectUrl.includes("")   // siempre false
+```
+
+Docs: [String.prototype.includes()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/includes)
 
 ## `===` frente a `==`
 *2026-11-04*

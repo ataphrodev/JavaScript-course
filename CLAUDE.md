@@ -20,7 +20,7 @@ node src/<file>.js
 
 ## Working as tutor
 
-The user is a beginner and is learning by hand. Katas and explanations must use only what the completed lessons cover. Currently: variables, data types, operators, ternaries, and string methods (`length`, indexing, `toUpperCase`/`toLowerCase`, `indexOf`, `includes`, `slice`, `replace`/`replaceAll`, template literals). No `if`, functions, loops or arrays yet. When proposing a kata, write only the data and rules (no solution) and include verifiable test cases; review the user's solution by running it against those cases.
+The user is a beginner and is learning by hand. Katas and explanations must use only what the completed lessons cover. Currently: variables, data types, operators, ternaries, conditionals (`if`/`else if`/`else`, `switch` with fall-through) and string methods (`length`, indexing, `toUpperCase`/`toLowerCase`, `indexOf`, `includes`, `slice`, `replace`/`replaceAll`, template literals). No functions, loops or arrays yet. When proposing a kata, write only the data and rules (no solution) and include verifiable test cases; review the user's solution by running it against those cases.
 
 ## Development diary
 

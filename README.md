@@ -36,6 +36,7 @@ javascript/
 | 02 | [02-kata-rpg-combat.js](src/02-kata-rpg-combat.js)               | Kata: rpg combat                     |
 | 03 | [03-kata-user-registration.js](src/03-kata-user-registration.js) | Kata: user registration              |
 | 04 | [04-kata-product-card.js](src/04-kata-product-card.js)           | Kata: product card                   |
+| 05 | [05-kata-login-screen.js](src/05-kata-login-screen.js)           | Kata: login screen                   |
 
 ## How to run
 
