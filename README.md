@@ -34,6 +34,7 @@ javascript/
 | 01 | [01-kata-box-office.js](src/01-kata-box-office.js)               | Kata: box office                     |
 | 02 | [02-kata-rpg-combat.js](src/02-kata-rpg-combat.js)               | Kata: rpg combat                     |
 | 03 | [03-kata-user-registration.js](src/03-kata-user-registration.js) | Kata: user registration              |
+| 04 | [04-kata-product-card.js](src/04-kata-product-card.js)           | Kata: product card                   |
 
 ## How to run
 
