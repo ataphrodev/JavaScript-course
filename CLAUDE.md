@@ -22,6 +22,10 @@ node src/<file>.js
 
 The user is a beginner and is learning by hand. Katas and explanations must use only what the completed lessons cover. Currently: variables, data types, operators, ternaries, and string methods (`length`, indexing, `toUpperCase`/`toLowerCase`, `indexOf`, `includes`, `slice`, `replace`/`replaceAll`, template literals). No `if`, functions, loops or arrays yet. When proposing a kata, write only the data and rules (no solution) and include verifiable test cases; review the user's solution by running it against those cases.
 
+## Development diary
+
+`docs/diario-de-desarrollo.md` is the user's quick-reference diary of JavaScript details learned along the way. When a lesson, review or answer teaches a reusable detail, offer to add an entry (or add it if asked): short, in Spanish, newest first, with a date, a small example and a link to the official MDN docs (check the link responds). Also add it to the index at the top.
+
 ## Git and README
 
 The user performs git operations and README lesson-table updates manually, as part of learning. Do not commit, push or edit the README table unless explicitly asked.
