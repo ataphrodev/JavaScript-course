@@ -20,11 +20,11 @@ node src/<file>.js
 
 ## Working as tutor
 
-The user is a beginner and is learning by hand. Katas and explanations must use only what the completed lessons cover. Currently: variables, data types, operators, ternaries, conditionals (`if`/`else if`/`else`, `switch` with fall-through) and string methods (`length`, indexing, `toUpperCase`/`toLowerCase`, `indexOf`, `includes`, `slice`, `replace`/`replaceAll`, template literals). No functions, loops or arrays yet. When proposing a kata, write only the data and rules (no solution) and include verifiable test cases; review the user's solution by running it against those cases.
+The user is a beginner and is learning by hand. Katas and explanations must use only what the completed lessons cover. Currently: variables, data types, operators, ternaries, conditionals (`if`/`else if`/`else`, `switch` with fall-through), string methods (`length`, indexing, `toUpperCase`/`toLowerCase`, `indexOf`, `includes`, `slice`, `replace`/`replaceAll`, template literals) and data structures (`Array`: `push`/`pop`/`shift`/`unshift`/`slice`/`splice`/`length`; `Set`: `add`/`delete`/`has`/`size`, `Array.from`; `Map`: `set`/`get`/`has`/`delete`/`clear`/`keys`/`values`/`entries`/`size`). No functions or loops yet (so no `forEach`, `map`, `filter` or `for...of`). When proposing a kata, write only the data and rules (no solution) and include verifiable test cases; review the user's solution by running it against those cases.
 
 ## Development diary
 
-`docs/diario-de-desarrollo.md` is the user's quick-reference diary of JavaScript details learned along the way. When a lesson, review or answer teaches a reusable detail, offer to add an entry (or add it if asked): short, in Spanish, newest first, with a date, a small example and a link to the official MDN docs (check the link responds). Also add it to the index at the top.
+`docs/diario-de-desarrollo.md` is the user's quick-reference diary of JavaScript details learned along the way. When a lesson, review or answer teaches a reusable detail, offer to add an entry (or add it if asked): short, in Spanish, newest first, with a date in day-month-year format (`*05-11-2026*`), a small example and a link to the official MDN docs (check the link responds). Write links in reference style: `[text][label]` in the entry and the `[label]: url` definition in the single block at the end of the file, so long URLs never clutter the text. In tables of methods, make each method name the link instead of adding a separate list of links. Also add it to the index at the top.
 
 ## Git and README
 
