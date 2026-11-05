@@ -5,6 +5,9 @@ Las entradas nuevas se añaden arriba del todo.
 
 ## Índice rápido
 
+- [Indexar un resultado y desestructurar un array](#indexar-un-resultado-y-desestructurar-un-array)
+- [Siempre llaves en `if`](#siempre-llaves-en-if)
+- [`splice`: eliminar, reemplazar o insertar](#splice-eliminar-reemplazar-o-insertar)
 - [Estructuras de datos: Array, Set y Map](#estructuras-de-datos-array-set-y-map)
 - [`switch` o `if`: cuándo usar cada uno](#switch-o-if-cuándo-usar-cada-uno)
 - [`includes("")` siempre es `true`](#includes-siempre-es-true)
@@ -18,6 +21,65 @@ Las entradas nuevas se añaden arriba del todo.
 - [Una variable, un solo tipo](#una-variable-un-solo-tipo)
 
 ---
+
+## Indexar un resultado y desestructurar un array
+
+_05-11-2026_
+
+- Si una expresión devuelve un array, puedes indexarlo al momento con `[posición]`, sin guardarlo antes en una variable.
+- Se lee de dentro hacia fuera: primero lo que está entre paréntesis y, al final, el `[0]`.
+- **Desestructurar** (`const [a, b] = array`) saca los elementos de un array en variables sueltas, según su posición.
+- Si solo necesitas la pareja entera, no la separes: guarda el array tal cual.
+
+```js
+const scores = new Map([["Ana", 8], ["Luis", 6]]);
+
+const firstEntry = Array.from(scores.entries())[0]; // ["Ana", 8]
+const [student, grade] = firstEntry; // student -> "Ana", grade -> 8
+```
+
+Docs: [Asignación por desestructuración][operators-destructuring-assignment]
+
+## Siempre llaves en `if`
+
+_05-11-2026_
+
+- Aunque el cuerpo sea una sola línea, escribe siempre las llaves `{ }` en `if`, `else if` y `else`.
+- Sin llaves, solo la **primera** instrucción pertenece al `if`. Si añades otra línea después, se ejecuta siempre.
+- Prettier no añade ni quita llaves: respeta las que escribes. Obligar a ponerlas es trabajo de un linter (ESLint, regla `curly`).
+- Ojo con el autocompletado del editor: puede sugerir la versión sin llaves. Revisa antes de aceptar.
+
+```js
+// Mal: la segunda línea no es del if
+if (isLogged) console.log("Hola");
+console.log("Bienvenido"); // se ejecuta siempre
+
+// Bien
+if (isLogged) {
+  console.log("Hola");
+  console.log("Bienvenido");
+}
+```
+
+Docs: [if...else][statements-if-else]
+
+## `splice`: eliminar, reemplazar o insertar
+
+_05-11-2026_
+
+- `splice(inicio, cuántosEliminar, ...nuevos)` modifica el array original y devuelve los elementos eliminados.
+- Con `cuántosEliminar` en `0` no se quita nada: solo se inserta. Los elementos siguientes se desplazan a la derecha.
+- `array[i] = x` no inserta: **sustituye** lo que hubiera en esa posición.
+- Después de cada cambio las posiciones se mueven. Cuenta desde el array ya modificado.
+
+```js
+const cart = ["pan", "leche", "huevos", "arroz"];
+cart.splice(2, 2); // elimina: ["huevos", "arroz"]
+cart.splice(1, 1, "leche sin lactosa"); // reemplaza "leche"
+cart.splice(2, 0, "fruta"); // inserta en la posición 2, sin eliminar
+```
+
+Docs: [Array.prototype.splice()][array-splice]
 
 ## Estructuras de datos: Array, Set y Map
 
@@ -336,3 +398,4 @@ Docs: [const][statements-const]
 [operators-logical-or]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Logical_OR
 [operators-conditional-operator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Conditional_operator
 [statements-const]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/const
+[operators-destructuring-assignment]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment
