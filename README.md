@@ -35,6 +35,7 @@ javascript/
 | 09  | [09-array-exercises.js](src/09-array-exercises.js)               | Array exercises                    |
 | 10  | [10-set-exercises.js](src/10-set-exercises.js)                   | Set exercises                      |
 | 11  | [11-map-exercises.js](src/11-map-exercises.js)                   | Map exercises                      |
+| 12  | [12-for-exercises.js](src/12-for-exercises.js)                   | For exercises                      |
 | 01  | [01-kata-box-office.js](src/01-kata-box-office.js)               | Kata: box office                   |
 | 02  | [02-kata-rpg-combat.js](src/02-kata-rpg-combat.js)               | Kata: rpg combat                   |
 | 03  | [03-kata-user-registration.js](src/03-kata-user-registration.js) | Kata: user registration            |

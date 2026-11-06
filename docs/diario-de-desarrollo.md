@@ -5,6 +5,7 @@ Las entradas nuevas se añaden arriba del todo.
 
 ## Índice rápido
 
+- [Bucles: `for`, `while`, `do...while` y `for...of`](#bucles-for-while-dowhile-y-forof)
 - [Indexar un resultado y desestructurar un array](#indexar-un-resultado-y-desestructurar-un-array)
 - [Siempre llaves en `if`](#siempre-llaves-en-if)
 - [`splice`: eliminar, reemplazar o insertar](#splice-eliminar-reemplazar-o-insertar)
@@ -22,6 +23,138 @@ Las entradas nuevas se añaden arriba del todo.
 
 ---
 
+## Bucles: `for`, `while`, `do...while` y `for...of`
+
+_06-11-2026_
+
+Un bucle repite un bloque de código mientras se cumpla una condición. Cada vuelta se llama **iteración**.
+
+| Bucle                               | Cuándo se comprueba la condición | Úsalo cuando...                                          |
+| ----------------------------------- | -------------------------------- | -------------------------------------------------------- |
+| [`for`][statements-for]             | antes de cada vuelta             | sabes cuántas veces repetir (un contador)                |
+| [`while`][statements-while]         | antes de cada vuelta             | no sabes cuántas veces; repites mientras algo sea cierto |
+| [`do...while`][statements-do-while] | **después** de cada vuelta       | el cuerpo debe ejecutarse **al menos una vez**           |
+| [`for...of`][statements-for-of]     | (no hay condición)               | recorres los valores de un Array, String, Set o Map      |
+
+```js
+// for: comienzo; condición; paso
+for (let i = 0; i < 3; i++) {
+  console.log(i); // 0, 1, 2
+}
+
+// while: el paso lo escribes tú dentro del cuerpo
+let attempts = 0;
+while (attempts < 3) {
+  attempts++;
+}
+
+// do...while: se ejecuta una vez aunque la condición sea falsa
+let n = 10;
+do {
+  console.log("Una vez");
+} while (n < 5); // termina con ;
+
+// for...of: valores directamente, sin índice
+const products = ["camiseta", "gorra"];
+for (const product of products) {
+  console.log(product);
+}
+```
+
+Cómo funciona `for (comienzo; condición; paso)`:
+
+- `comienzo` se ejecuta **una sola vez**, al empezar. `condición` se evalúa antes de cada vuelta. `paso` se ejecuta después del cuerpo.
+- Una variable declarada con `let` en `comienzo` solo existe dentro del bucle: usarla después da error.
+- Cualquier parte puede omitirse, pero los dos `;` son obligatorios. `for (;;)` es un bucle infinito.
+
+### `break` y `continue`
+
+- [`break`][statements-break] sale del bucle por completo.
+- [`continue`][statements-continue] salta el resto de la iteración actual y pasa a la siguiente.
+- Son **sentencias**, no expresiones: no se pueden poner en un ternario (`cond ? x : continue` es un error de sintaxis). Usa `if`.
+- Con bucles anidados afectan solo al bucle más interno. Para salir del externo existen las [etiquetas][statements-label] (`outer: for (...)` y `break outer`), pero conviene evitarlas: dificultan la lectura.
+
+```js
+for (let i = 0; i < 5; i++) {
+  if (i === 1) {
+    continue; // se salta el 1
+  }
+  if (i === 4) {
+    break; // sale del bucle al llegar a 4
+  }
+  console.log(i); // 0, 2, 3
+}
+```
+
+### `for...of` con Set y Map
+
+- Recorre cualquier **iterable**: Array, String, Set, Map. Un objeto normal `{}` **no** lo es y lanza `TypeError`.
+- Un Map entrega parejas `[clave, valor]`: se pueden desestructurar en la cabecera del bucle.
+- Con `const` en la cabecera cada vuelta crea una variable nueva, así que funciona sin problema siempre que no la reasignes en el cuerpo.
+
+```js
+const scores = new Map([
+  ["Ana", 8],
+  ["Luis", 6],
+]);
+for (const [student, grade] of scores) {
+  console.log(student, grade); // Ana 8, Luis 6
+}
+```
+
+### `for...in`: recorrer las claves de un objeto
+
+- [`for...in`][statements-for-in] recorre las **claves** de un objeto, siempre como **texto** (`"name"`, `"0"`...), no sus valores.
+- Para leer el valor se usa la clave entre corchetes: `user[key]`.
+- Está pensado para **objetos** (`{ clave: valor }`). Incluye también las claves heredadas, no solo las propias.
+- Se declara la clave con `const`, igual que en `for...of`.
+- `for...of` recorre **valores** de un iterable; `for...in` recorre **claves** de un objeto.
+
+```js
+const user = { name: "Ana", age: 25 };
+
+for (const key in user) {
+  console.log(key, user[key]); // name Ana, age 25
+}
+```
+
+Con arrays no lo uses: devuelve los índices como texto (`"0"`, `"1"`...), no los valores, y puede colarse alguna propiedad suelta.
+
+```js
+const colors = ["rojo", "verde"];
+
+for (const index in colors) {
+  console.log(index); // "0", "1" (no "rojo")
+}
+for (const color of colors) {
+  console.log(color); // "rojo", "verde"
+}
+```
+
+Con un texto también recorre los índices: `for (const i in "hola")` da `"0"`, `"1"`, `"2"`, `"3"`.
+
+Para recorrer un objeto es más seguro [`Object.keys()`][object-keys] o [`Object.entries()`][object-entries] con `for...of`, porque solo dan las claves propias:
+
+```js
+for (const [key, value] of Object.entries(user)) {
+  console.log(key, value);
+}
+```
+
+### Buenas prácticas
+
+- Prefiere `for...of` cuando no necesites el índice: es más corto y no tiene errores de contador. Usa `for` clásico cuando necesites el índice o un paso distinto de 1.
+- Declara siempre con `const` (o `let` si hay que reasignar). Nunca `var`.
+- Siempre llaves `{ }` en el cuerpo, aunque sea una sola línea (ver [Siempre llaves en `if`](#siempre-llaves-en-if)).
+- Evita el **bucle infinito**: en `while` y `do...while`, asegúrate de que algo dentro del cuerpo cambia la condición (olvidar `attempts++` lo deja colgado). Para parar uno en el terminal: `Ctrl + C`.
+- Cuidado con los límites: `i < length` recorre todas las posiciones; `i <= length` se pasa una y da `undefined`.
+- Pon el nombre de contador `i` solo en bucles cortos; si no, uno descriptivo (`row`, `product`). Para `for...of`, singular del plural: `for (const product of products)`.
+- No modifiques el array (añadir/quitar con `push` o `splice`) mientras lo recorres: las posiciones se mueven y te saltas elementos.
+- Usa `continue` para evitar anidar un `if` enorme (sal pronto de la iteración) y `break` en cuanto ya tengas lo que buscabas. No abuses: si hay muchos, replantea la condición del bucle.
+- Un `while (true)` con `break` es válido, pero solo si la salida es clara; si puedes ponerla en la condición, hazlo.
+
+Docs: [for][statements-for] · [while][statements-while] · [do...while][statements-do-while] · [for...of][statements-for-of] · [break][statements-break] · [continue][statements-continue] · [for...in][statements-for-in] · [Bucles en javascript.info][javascript-info-loops] · [Guía de estilo de Google (bucles)][google-style-guide]
+
 ## Indexar un resultado y desestructurar un array
 
 _05-11-2026_
@@ -32,7 +165,10 @@ _05-11-2026_
 - Si solo necesitas la pareja entera, no la separes: guarda el array tal cual.
 
 ```js
-const scores = new Map([["Ana", 8], ["Luis", 6]]);
+const scores = new Map([
+  ["Ana", 8],
+  ["Luis", 6],
+]);
 
 const firstEntry = Array.from(scores.entries())[0]; // ["Ana", 8]
 const [student, grade] = firstEntry; // student -> "Ana", grade -> 8
@@ -233,7 +369,23 @@ redirectUrl !== ""; // correcto: "no está vacío"
 !redirectUrl.includes(""); // siempre false
 ```
 
-Docs: [String.prototype.includes()][string-includes]
+**`contenedor.includes(elemento)`: el orden importa** (_06-11-2026_)
+
+- `includes` se escribe sobre **donde buscas** y se le pasa **lo que buscas**. Invertirlo da resultados sin sentido o error.
+- Para saber si una letra es vocal, el contenedor es el array de vocales: `vowels.includes(letter)`.
+- `letter.includes(vowels)` pregunta si la letra contiene el array entero, y no es lo que quieres.
+- `String.includes` y `Array.includes` buscan distinto: en un texto, una **subcadena**; en un array, un **elemento exacto**. `"hola".includes("ol")` es `true`, pero `["hola"].includes("ol")` es `false`.
+- Normaliza antes de comparar: `"A"` no está en `["a", "e"]`. Usa `letter.toLowerCase()`.
+
+```js
+const vowels = ["a", "e", "i", "o", "u"];
+const letter = "O";
+
+vowels.includes(letter.toLowerCase()); // true: ¿el array tiene "o"?
+letter.toLowerCase().includes(vowels); // mal: busca el array dentro de la letra
+```
+
+Docs: [String.prototype.includes()][string-includes] · [Array.prototype.includes()][array-includes]
 
 ## `===` frente a `==`
 
@@ -371,6 +523,7 @@ Docs: [const][statements-const]
 [array-length]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/length
 [array-from]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/from
 [array-isarray]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/isArray
+[array-includes]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/includes
 [set]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set
 [set-add]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set/add
 [set-delete]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set/delete
@@ -399,3 +552,15 @@ Docs: [const][statements-const]
 [operators-conditional-operator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Conditional_operator
 [statements-const]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/const
 [operators-destructuring-assignment]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment
+[statements-for]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for
+[statements-while]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/while
+[statements-do-while]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/do...while
+[statements-for-of]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...of
+[statements-for-in]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...in
+[statements-break]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/break
+[statements-continue]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/continue
+[statements-label]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/label
+[javascript-info-loops]: https://es.javascript.info/while-for
+[google-style-guide]: https://google.github.io/styleguide/jsguide.html
+[object-keys]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys
+[object-entries]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/entries
