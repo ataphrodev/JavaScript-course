@@ -5,6 +5,7 @@ Las entradas nuevas se añaden arriba del todo.
 
 ## Índice rápido
 
+- [Funciones: declaración, parámetros, retorno, arrow y orden superior](#funciones-declaración-parámetros-retorno-arrow-y-orden-superior)
 - [Bucles: `for`, `while`, `do...while` y `for...of`](#bucles-for-while-dowhile-y-forof)
 - [Indexar un resultado y desestructurar un array](#indexar-un-resultado-y-desestructurar-un-array)
 - [Siempre llaves en `if`](#siempre-llaves-en-if)
@@ -20,6 +21,274 @@ Las entradas nuevas se añaden arriba del todo.
 - [`switch` y fall-through](#switch-y-fall-through)
 - [Ternario: para asignar, no para ejecutar](#ternario-para-asignar-no-para-ejecutar)
 - [Una variable, un solo tipo](#una-variable-un-solo-tipo)
+
+---
+
+## Funciones: declaración, parámetros, retorno, arrow y orden superior
+
+_08-11-2026_
+
+Una [función][functions] es un bloque de código con nombre que se escribe una vez y se ejecuta (se **llama**) cuando hace falta, con unos datos de entrada distintos cada vez. Sirve para no repetir código: si algo cambia, se edita en un solo sitio.
+
+En JavaScript una función es un **valor**: se puede guardar en una variable, pasar como argumento a otra función o devolverla. De ahí salen casi todos los apartados de esta entrada.
+
+### Declaración de funciones
+
+```js
+function greet(name) {
+  console.log(`Hola, ${name}`);
+}
+
+greet("Ana"); // Hola, Ana  (sin los paréntesis no se ejecuta)
+```
+
+- Se escribe [`function`][statements-function], el nombre, los parámetros entre `( )` y el cuerpo entre `{ }`.
+- Declarar no ejecuta nada: hay que **llamarla** con `nombre()`.
+- Las declaraciones se procesan antes de ejecutar el código (_hoisting_), así que puedes llamarlas **antes** de escribirlas.
+- Una variable declarada dentro de la función es **local**: solo existe ahí dentro. Fuera da error.
+- Si una variable local tiene el mismo nombre que otra de fuera, la local **oculta** a la externa.
+
+```js
+sayBye("Luis"); // funciona: la declaración "sube"
+function sayBye(name) {
+  console.log(`Adiós, ${name}`);
+}
+```
+
+### Parámetros y argumentos
+
+- **Parámetro:** el nombre que aparece en la declaración (`name`). **Argumento:** el valor real que pasas al llamarla (`"Ana"`).
+- La función trabaja con una **copia** del valor: cambiar el parámetro dentro no cambia la variable de fuera.
+- Si falta un argumento, el parámetro vale `undefined`. Si sobran, se ignoran, sin error.
+
+```js
+function add(a, b) {
+  return a + b;
+}
+
+add(2, 3); // 5
+add(2); // NaN: b es undefined y 2 + undefined no es un número
+add(2, 3, 99); // 5: el 99 sobra
+```
+
+### Valores por defecto
+
+- Con `=` en la cabecera, el parámetro toma ese valor cuando el argumento **falta o es `undefined`**.
+- Solo `undefined` activa el valor por defecto. `null`, `0`, `""` y `false` se respetan tal cual.
+- El valor se calcula **en cada llamada**, así que un `[]` por defecto no se comparte entre llamadas.
+- Pueden usar los parámetros anteriores. Pon los parámetros con valor por defecto **al final**: para saltarte uno intermedio tendrías que pasar `undefined` a mano.
+
+```js
+function welcome(name = "invitado", greeting = "Hola") {
+  return `${greeting}, ${name}`;
+}
+
+welcome(); // "Hola, invitado"
+welcome("Ana"); // "Hola, Ana"
+welcome(undefined, "Buenas"); // "Buenas, invitado"
+welcome(null); // "Hola, null": null NO activa el valor por defecto
+```
+
+Si quieres tratar también `null` como "falta", usa [`??`][operators-nullish-coalescing] dentro de la función. Docs: [Parámetros por defecto][functions-default-parameters]
+
+### Retorno de valores
+
+- [`return`][statements-return] **termina** la función y devuelve un resultado a quien la llamó. Lo que haya debajo no se ejecuta.
+- Sin `return` (o con `return;` vacío) la función devuelve `undefined`.
+- **`console.log` no es `return`:** mostrar un valor por pantalla no lo entrega al código que llamó. Si quieres reutilizar el resultado, devuélvelo.
+- No separes `return` de su valor con un salto de línea: JavaScript pone un `;` automático y devuelve `undefined`.
+
+```js
+function calcTotal(price, units) {
+  return price * units; // devuelve; no muestra
+}
+
+const total = calcTotal(10, 2); // 20, y ahora puedo seguir usándolo
+console.log(total);
+
+function badReturn() {
+  return
+  42; // nunca se alcanza: devuelve undefined
+}
+```
+
+Cuando hay varios casos, sal pronto con un `return` en cuanto tengas la respuesta, en lugar de anidar `if` dentro de `if`:
+
+```js
+function getDiscount(age) {
+  if (age < 18) {
+    return 0.2;
+  }
+  if (age >= 65) {
+    return 0.3;
+  }
+  return 0;
+}
+```
+
+### Funciones anónimas y expresiones de función
+
+- Una **expresión de función** crea la función dentro de una expresión y se guarda en una variable. Puede no llevar nombre: es una función **anónima**.
+- Existe desde que la ejecución llega a esa línea: llamarla antes da `ReferenceError` (a diferencia de la declaración).
+- Una función anónima sin variable se usa sobre todo como **callback**: se pasa directamente como argumento y no hace falta nombrarla.
+
+```js
+const double = function (n) {
+  return n * 2;
+};
+double(4); // 8
+
+// Anónima pasada como callback (setTimeout viene de serie en Node)
+setTimeout(function () {
+  console.log("Han pasado 1000 ms");
+}, 1000);
+```
+
+| Forma                       | Se puede llamar antes de definirla | Úsala cuando...                                       |
+| --------------------------- | ---------------------------------- | ----------------------------------------------------- |
+| Declaración (`function f`)  | sí                                 | es la opción **por defecto**, más fácil de localizar  |
+| Expresión (`const f = function`) | no                            | la función es un valor que vas a pasar o elegir       |
+| Anónima como argumento      | (no tiene nombre)                  | es un callback de un solo uso                         |
+
+Docs: [Expresión de función][operators-function]
+
+### Arrow functions (funciones flecha)
+
+Sintaxis corta para escribir funciones, pensada sobre todo para callbacks de una línea.
+
+```js
+// Con llaves: varias líneas y return explícito
+const average = (x, y) => {
+  const total = x + y;
+  return total / 2;
+};
+
+// Sin llaves: UNA expresión, y su resultado se devuelve solo (return implícito)
+const add = (a, b) => a + b;
+
+// Un solo parámetro: los paréntesis son opcionales
+const triple = (n) => n * 3;
+
+// Sin parámetros: los paréntesis son obligatorios
+const sayHi = () => console.log("Hola");
+```
+
+- Sin llaves se devuelve el resultado de la expresión. Con llaves hay que escribir `return`, o devuelve `undefined`.
+- Para devolver un **objeto literal** sin llaves de cuerpo, envuélvelo en paréntesis: `(name) => ({ name })`. Sin ellos, `{ }` se interpreta como el cuerpo.
+- Son siempre expresiones: se guardan en una variable (`const`) o se pasan como argumento. No se pueden llamar antes de definirlas.
+- Tienen diferencias con `this` que se verán más adelante; por ahora son equivalentes a una función normal.
+- Mientras aprendes, usa los **paréntesis siempre** en los parámetros (`(n) => ...`): es más uniforme y los formateadores como Prettier lo hacen por defecto.
+
+Docs: [Arrow functions][functions-arrow-functions]
+
+### Funciones anidadas
+
+- Una función puede declararse **dentro de otra**. La interna ve las variables de la externa, pero la externa no ve las de la interna.
+- Sirve para repartir una tarea en pasos pequeños que solo tienen sentido dentro de esa función (funciones auxiliares).
+- Una función interna **recuerda** las variables del sitio donde se creó, incluso si la devuelves y la usas después. Eso se llama _closure_. Cada llamada a la externa crea sus propias variables:
+
+```js
+function calcTotal(price, units) {
+  function applyVat(value) {
+    return value * 1.21; // solo existe dentro de calcTotal
+  }
+  return applyVat(price * units);
+}
+
+function makeCounter() {
+  let count = 0; // local, pero la función devuelta la recuerda
+  return () => ++count;
+}
+
+const counterA = makeCounter();
+const counterB = makeCounter();
+counterA(); // 1
+counterA(); // 2
+counterB(); // 1: cada contador tiene su propio count
+```
+
+Docs: [Closures][guide-closures]
+
+### Funciones de orden superior
+
+Una función de **orden superior** es la que **recibe otra función** como argumento o **devuelve** una función. La función que se le pasa se llama **callback**.
+
+```js
+// Recibe una función
+function operate(x, y, operation) {
+  return operation(x, y);
+}
+operate(6, 3, (p, q) => p - q); // 3
+operate(6, 3, (p, q) => p * q); // 18
+
+// Devuelve una función
+function makeMultiplier(factor) {
+  return (n) => n * factor;
+}
+const timesFive = makeMultiplier(5);
+timesFive(3); // 15
+```
+
+- Al pasar un callback, pasas la **función** sin paréntesis (`operate(6, 3, sum)`). Con paréntesis (`sum()`) la ejecutarías y pasarías su resultado.
+- Con ellas separas **qué hacer con cada elemento** (el callback) de **cómo recorrerlos** (la función de orden superior). El mismo recorrido sirve para tareas distintas.
+- Los métodos de array [`forEach`][array-foreach], [`map`][array-map] y [`filter`][array-filter] son funciones de orden superior: reciben un callback.
+
+### `forEach`
+
+[`forEach`][array-foreach] recorre un array y ejecuta un callback **una vez por elemento**.
+
+```js
+const products = ["camiseta", "gorra", "bufanda"];
+
+products.forEach((product, index) => {
+  console.log(index, product); // 0 camiseta, 1 gorra, 2 bufanda
+});
+```
+
+- El callback recibe tres argumentos: `(elemento, índice, arrayCompleto)`. Solo declaras los que uses.
+- Devuelve siempre `undefined`: sirve para **hacer algo** con cada elemento (mostrarlo, sumarlo en una variable de fuera), no para construir un resultado. Para eso están `map` (array nuevo transformado) y `filter` (array nuevo con los que cumplen).
+- **No hay `break` ni `continue`.** Un `return` dentro del callback solo salta esa vuelta (equivale a `continue`); no puede parar el recorrido.
+- Si necesitas parar a medias, usa `for...of`.
+- No recorre las posiciones vacías de un array. No espera a callbacks `async`.
+
+```js
+[1, 2, 3, 4].forEach((n) => {
+  if (n % 2 === 0) {
+    return; // salta solo esta vuelta
+  }
+  console.log(n); // 1, 3
+});
+```
+
+| Necesito...                        | Uso                                       |
+| ---------------------------------- | ----------------------------------------- |
+| Hacer algo con cada elemento       | `forEach` o `for...of`                    |
+| Parar antes de terminar, o saltar  | `for...of` con `break` / `continue`       |
+| Recorrer un Set o un Map           | `for...of` (el `forEach` de Set/Map existe, pero `for...of` es más uniforme) |
+
+### Casos de uso
+
+- **Evitar repetir código:** el mismo cálculo (IVA, descuento, formato de un precio) en varios sitios.
+- **Dividir un problema:** una función grande hecha de otras pequeñas con nombre (`isValidEmail`, `calcTotal`...).
+- **Devolver un resultado reutilizable:** `return` entrega el valor para guardarlo, compararlo o pasarlo a otra función.
+- **Parametrizar el comportamiento:** pasar un callback para que el recorrido sea el mismo y la acción cambie (`operate`, `forEach`).
+- **Crear funciones a medida:** una función que devuelve otra (`makeMultiplier`, `makeCounter`).
+
+### Buenas prácticas
+
+- Una función, **una sola tarea**, y que haga lo que dice su nombre. Si necesitas una "y" para describirla, divídela.
+- Nombres con **verbo** y en `camelCase`: `getAge`, `calcTotal`, `showMessage`, `isValid`, `createUser`. Prefijos habituales: `get` (devuelve algo), `calc` (calcula), `show` (muestra), `create` (crea), `check` / `is` (devuelve `true` o `false`).
+- Prefiere **parámetros y `return`** a leer o modificar variables de fuera. Una función que recibe datos y devuelve un resultado es más fácil de entender y de probar.
+- No cambies los datos que recibes en un parámetro de tipo array: trabaja sobre una copia o devuelve un resultado nuevo.
+- Pocos parámetros (hasta 3 o 4). Si hay muchos, es señal de que la función hace demasiado.
+- Valores por defecto al **final** de la lista de parámetros.
+- Declaración por defecto (`function`); `const` + arrow para callbacks cortos y funciones que pasas como valor.
+- Los callbacks, **cortos**. Si ocupan muchas líneas, dale nombre a la función y pásala por nombre.
+- Siempre llaves `{ }` en el cuerpo, y `return` en la misma línea que su valor.
+- Funciones con **`const`**, no con `let`: no deberías reasignar una función por accidente.
+- Elige el bucle correcto: `forEach` para recorrer y actuar; `for...of` si necesitas `break`/`continue`; `map`/`filter` si quieres un array nuevo.
+
+Docs: [Funciones][functions] · [function][statements-function] · [Parámetros por defecto][functions-default-parameters] · [return][statements-return] · [Arrow functions][functions-arrow-functions] · [Closures][guide-closures] · [forEach][array-foreach] · [Funciones básicas en javascript.info][javascript-info-function-basics] · [Expresiones de función][javascript-info-function-expressions] · [Funciones flecha][javascript-info-arrow-functions] · [Ámbito y closures][javascript-info-closure]
 
 ---
 
@@ -627,3 +896,18 @@ Docs: [const][statements-const]
 [google-style-guide]: https://google.github.io/styleguide/jsguide.html
 [object-keys]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys
 [object-entries]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/entries
+[functions]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions
+[statements-function]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function
+[statements-return]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/return
+[operators-function]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/function
+[operators-nullish-coalescing]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing
+[functions-default-parameters]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Default_parameters
+[functions-arrow-functions]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions
+[guide-closures]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Closures
+[array-foreach]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach
+[array-map]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
+[array-filter]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter
+[javascript-info-function-basics]: https://es.javascript.info/function-basics
+[javascript-info-function-expressions]: https://es.javascript.info/function-expressions
+[javascript-info-arrow-functions]: https://es.javascript.info/arrow-functions-basics
+[javascript-info-closure]: https://es.javascript.info/closure
