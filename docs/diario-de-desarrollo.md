@@ -141,6 +141,69 @@ for (const [key, value] of Object.entries(user)) {
 }
 ```
 
+### Lo aprendido practicando
+
+_08-11-2026_
+
+**Con `for...of` la variable de la cabecera ya es el valor**
+
+- No hay índice ni `names[index]`: en `for (const name of names)`, `name` vale `"Ana"` en la primera vuelta, `"Luis"` en la segunda...
+- Para quedarte con el mayor o el más largo, parte de un valor neutro (`""`, `0`) y compara con `>`. Con `>` el empate no cambia nada (gana el primero); con `>=` ganaría el último.
+
+```js
+let longestName = "";
+for (const name of names) {
+  if (name.length > longestName.length) {
+    longestName = name;
+  }
+}
+```
+
+**`while` cuando no sabes cuántas vueltas habrá**
+
+- La condición responde a "¿tengo que seguir?". Para repetir mientras un texto contenga algo: `while (text.includes("  "))`, no `text === "  "` (eso compara el texto entero).
+- `replace` solo cambia la **primera** coincidencia: el bucle es lo que lo repite hasta que no quede ninguna.
+- `shift()` quita el primer elemento **y lo devuelve**: sirve para sacarlo y usarlo a la vez. Como el array se acorta, `queue.length !== 0` acaba siendo falso.
+- Condición con dos partes: `&&` exige que se cumplan las dos para seguir (`queue.length !== 0 && attended < maxAttended`).
+
+```js
+while (queue.length !== 0 && attended < maxAttended) {
+  const person = queue.shift(); // quita y devuelve
+  console.log(`Atendiendo a ${person}`);
+  attended++;
+}
+```
+
+**`do...while`: el cuerpo va antes de la condición**
+
+- Con `counter = 0` y `while (counter > 0)` el cuerpo se ejecuta **una vez** igualmente. Con `while` normal no se ejecutaría ninguna.
+- Si el valor se lee dentro del bucle (`roll = rolls[throwsCount]`), declara la variable antes con `let roll;` (sin valor) para poder usarla en la condición.
+- Suma al contador **antes** de mostrarlo si el mensaje cuenta desde 1 (`Tirada 1`), porque el índice empieza en 0.
+
+**`break` y `continue`: el orden de las comprobaciones importa**
+
+- Pon primero lo que corta o salta (`break`, `continue`) y al final la acción normal. Así la etiqueta que detiene o se salta nunca llega a mostrarse ni a contarse.
+- Con `if / else if / else` solo se ejecuta una rama por vuelta, justo lo que se necesita.
+
+```js
+for (const tag of tags) {
+  if (tag === stopTag) {
+    break; // sale, no se muestra
+  } else if (tag === skipTag) {
+    continue; // pasa a la siguiente, no se muestra
+  } else {
+    console.log(tag.toUpperCase());
+    shown++;
+  }
+}
+```
+
+**Otros detalles**
+
+- El contador empieza en 0 o en 1 según lo que pida el enunciado: "del 1 al 10" es `let i = 1; i <= 10`. Empezar en 0 añade una vuelta de más.
+- Si el texto es fijo, escríbelo fijo (`Salió un 6`) en vez de interpolar una variable que siempre vale lo mismo.
+- Antes de dar por bueno un bucle, pruébalo con los casos extremos: lista vacía, un solo elemento, valor que ya cumple la condición.
+
 ### Buenas prácticas
 
 - Prefiere `for...of` cuando no necesites el índice: es más corto y no tiene errores de contador. Usa `for` clásico cuando necesites el índice o un paso distinto de 1.
