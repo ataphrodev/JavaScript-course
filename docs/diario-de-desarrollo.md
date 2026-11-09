@@ -5,6 +5,7 @@ Las entradas nuevas se añaden arriba del todo.
 
 ## Índice rápido
 
+- [Objetos: sintaxis, propiedades, métodos, referencias e iteración](#objetos-sintaxis-propiedades-métodos-referencias-e-iteración)
 - [Funciones: declaración, parámetros, retorno, arrow y orden superior](#funciones-declaración-parámetros-retorno-arrow-y-orden-superior)
 - [Bucles: `for`, `while`, `do...while` y `for...of`](#bucles-for-while-dowhile-y-forof)
 - [Indexar un resultado y desestructurar un array](#indexar-un-resultado-y-desestructurar-un-array)
@@ -24,7 +25,339 @@ Las entradas nuevas se añaden arriba del todo.
 
 ---
 
-## Funciones: declaración, parámetros, retorno, arrow y orden superior
+## Objetos: sintaxis, propiedades, métodos, referencias e iteración
+
+_09-11-2026_
+
+Un [objeto][object] es una estructura de datos fundamental en JavaScript que permite almacenar colecciones de pares **clave-valor** agrupando propiedades (datos) y métodos (funciones). A diferencia de los tipos primitivos (números, strings, booleanos), que guardan un solo valor simple, los objetos son tipos complejos organizados por referencias.
+
+---
+
+### 1. Sintaxis básica de objetos
+
+Hay dos formas principales de crear un objeto:
+
+1. **Objeto literal (la más común y recomendada):** con llaves `{}`.
+2. **Constructor de objeto:** con `new Object()`.
+
+```js
+// 1. Literal de objeto (recomendado)
+const user = {
+  name: "Miguel",
+  age: 30,
+  "tipo de usuario": "Admin", // Clave con espacios: debe ir entre comillas. Poco común
+};
+
+// 2. Constructor Object (menos habitual)
+const emptyObj = new Object();
+```
+
+- Las **claves** (también llamadas propiedades) son cadenas de texto o símbolos. Si el nombre de la propiedad contiene espacios, guiones o caracteres especiales, debe escribirse entre comillas.
+- Los **valores** pueden ser de cualquier tipo de dato (primitivos, arrays, funciones u otros objetos).
+- Es una buena práctica poner una **coma final** (_trailing comma_) tras la última propiedad para que sea más fácil añadir o reordenar líneas sin generar diffs extraños en git.
+
+Docs: [Objetos en JavaScript.info][javascript-info-object] · [Object en MDN][object]
+
+---
+
+### 2. Acceso a propiedades
+
+Para leer el valor de una propiedad existen dos formas:
+
+```js
+const person = {
+  name: "Ana",
+  age: 25,
+  "código postal": 28001,
+};
+
+// Notación de punto: limpia y directa
+console.log(person.name); // "Ana"
+
+// Notación de corchetes: obligatoria para nombres con espacios, guiones o claves dinámicas
+console.log(person["código postal"]); // 28001
+
+// Acceso dinámico usando variables o expresiones dentro de corchetes
+const keyToRead = "age";
+console.log(person[keyToRead]); // 25 (evalúa la variable)
+```
+
+- **Notación de punto (`obj.propiedad`):** requiere que la clave sea un identificador válido (sin espacios ni guiones y que no empiece por un número).
+- **Notación de corchetes (`obj["propiedad"]`):** permite cualquier cadena y expresiones calculadas en tiempo de ejecución.
+- Si intentas acceder a una propiedad que no existe, JavaScript **no lanza error**, sino que devuelve `undefined`.
+
+Docs: [Accesores de propiedades en MDN][operators-property-accessors]
+
+---
+
+### 3. Modificación y adición de propiedades
+
+Las propiedades de un objeto son mutables, incluso si el objeto se declara con `const`.
+
+```js
+const car = {
+  brand: "Toyota",
+  year: 2020,
+};
+
+// Modificar una propiedad existente
+car.year = 2022;
+
+// Añadir una nueva propiedad (con punto o con corchetes)
+car.color = "rojo";
+car["en venta"] = true;
+
+console.log(car);
+// { brand: 'Toyota', year: 2022, color: 'rojo', 'en venta': true }
+```
+
+> **¿Por qué `const` permite cambiar las propiedades?**
+> `const` protege la **variable**, no el contenido del objeto. Impide que reasignes la variable a otro valor (`car = {}` daría `TypeError`), pero el objeto al que apunta sigue siendo mutable.
+
+---
+
+### 4. Eliminación de propiedades y comprobación (`delete` e `in`)
+
+Para borrar una propiedad de un objeto se utiliza el operador [`delete`][operators-delete].
+
+```js
+const hero = {
+  name: "Batman",
+  vehicle: "Batmobile",
+  age: 35,
+};
+
+// Eliminar la propiedad
+delete hero.age;
+
+console.log(hero.age); // undefined
+console.log("age" in hero); // false
+```
+
+#### Comprobar si una propiedad existe: el operador `in`
+
+Acceder a una propiedad inexistente devuelve `undefined`, pero `obj.prop !== undefined` puede fallar si la propiedad **sí existe** y su valor almacenado es precisamente `undefined`. El operador [`in`][operators-in] comprueba la existencia de la clave de forma infalible:
+
+```js
+const settings = {
+  theme: undefined,
+};
+
+console.log(settings.theme !== undefined); // false (parece que no existe)
+console.log("theme" in settings); // true (la clave sí existe en el objeto)
+```
+
+Docs: [delete en MDN][operators-delete] · [Operador in en MDN][operators-in]
+
+---
+
+### 5. Métodos y la palabra clave `this`
+
+Un **método** es una función que está asignada como propiedad de un objeto y representa una acción que el objeto puede realizar.
+
+```js
+const user = {
+  name: "Laura",
+  age: 28,
+
+  // Sintaxis corta ES6 (recomendada)
+  greet() {
+    console.log(`Hola, soy ${this.name} y tengo ${this.age} años.`);
+  },
+
+  // Sintaxis clásica
+  sayGoodbye: function () {
+    console.log("¡Adiós!");
+  },
+};
+
+user.greet(); // "Hola, soy Laura y tengo 28 años."
+```
+
+#### ¿Qué es `this`?
+
+La palabra clave [`this`][operators-this] hace referencia al objeto actual desde el que se está llamando al método (`user` en el ejemplo). Permite que el método acceda a las demás propiedades del mismo objeto sin depender de cómo se llama la variable externa.
+
+> ⚠️ **¡Cuidado con las Arrow Functions como métodos!**
+> Las funciones flecha **no tienen su propio `this`**; toman el `this` del contexto exterior (léxico). Si declaras un método con `() => {}`, `this.name` será `undefined` (o apuntará al objeto global). Para métodos de objetos, usa siempre funciones normales o la sintaxis corta `metodo() { ... }`.
+
+Docs: [Métodos de objeto y "this" en JavaScript.info][javascript-info-object-methods] · [this en MDN][operators-this]
+
+---
+
+### 6. Objetos anidados y encadenamiento opcional (`?.`)
+
+Un objeto puede contener otros objetos como valores de sus propiedades, creando estructuras complejas:
+
+```js
+const developer = {
+  name: "Carlos",
+  skills: {
+    language: "JavaScript",
+    tools: {
+      editor: "VS Code",
+    },
+  },
+};
+
+console.log(developer.skills.language); // "JavaScript"
+console.log(developer.skills.tools.editor); // "VS Code"
+```
+
+#### Encadenamiento opcional (`?.`)
+
+Si intentas leer una propiedad anidada de algo que es `null` o `undefined`, JavaScript arroja un error crítico: `TypeError: Cannot read properties of undefined`.
+
+El operador de [encadenamiento opcional (`?.`)][operators-optional-chaining] detiene la evaluación y devuelve `undefined` si la parte anterior no existe, evitando que el programa se rompa:
+
+```js
+const client = {
+  name: "Marta",
+  // No tiene propiedad address
+};
+
+// Sin ?. arrojaría TypeError: Cannot read properties of undefined
+// Con ?. devuelve undefined de forma segura:
+console.log(client.address?.city); // undefined
+```
+
+Docs: [Encadenamiento opcional en JavaScript.info][javascript-info-optional-chaining] · [Optional chaining en MDN][operators-optional-chaining]
+
+---
+
+### 7. Igualdad y copia: valor frente a referencia
+
+Una de las diferencias fundamentales entre primitivos y objetos:
+
+- Los **primitivos** (números, strings, booleanos...) se copian y comparan por **valor**.
+- Los **objetos** se almacenan y copian por **referencia** (dirección de memoria).
+
+```js
+// Dos objetos independientes con el mismo contenido NO son iguales:
+const a = { val: 10 };
+const b = { val: 10 };
+console.log(a === b); // false (ocupan posiciones distintas de memoria)
+
+// Asignación copia la referencia (apuntan al mismo sitio):
+const c = a;
+console.log(a === c); // true
+
+c.val = 20;
+console.log(a.val); // 20 (modificar 'c' altera 'a' porque son el mismo objeto)
+```
+
+#### Cómo clonar un objeto de verdad
+
+| Tipo de copia                    | Sintaxis                                         | Comportamiento                                                                     |
+| :------------------------------- | :----------------------------------------------- | :--------------------------------------------------------------------------------- |
+| **Superficial (_Shallow copy_)** | `{ ...obj }` o `Object.assign({}, obj)`          | Clona el primer nivel; los objetos anidados se siguen compartiendo por referencia. |
+| **Profunda (_Deep copy_)**       | [`structuredClone(obj)`][global-structuredclone] | Clona el objeto completo y todos sus niveles anidados de forma independiente.      |
+
+```js
+const original = { name: "Pedro", details: { score: 100 } };
+
+// Clon superficial con spread operator
+const shallowCopy = { ...original };
+shallowCopy.name = "Juan"; // No cambia original.name
+shallowCopy.details.score = 200; // ¡Cuidado! Sí cambia original.details.score
+
+// Clon profundo moderno nativo
+const deepCopy = structuredClone(original);
+deepCopy.details.score = 999; // NO cambia original.details.score
+```
+
+Docs: [Referencias y copia de objetos en JavaScript.info][javascript-info-object-copy] · [structuredClone en MDN][global-structuredclone] · [Object.assign en MDN][object-assign]
+
+---
+
+### 8. Iteración sobre objetos
+
+A diferencia de los arrays, los objetos normales no son directamente iterables con un simple `for...of`. Existen varias formas de recorrerlos:
+
+#### 1. Bucle `for...in`
+
+Recorre todas las **claves** (nombres de propiedad) del objeto:
+
+```js
+const inventory = {
+  apples: 5,
+  oranges: 12,
+  bananas: 8,
+};
+
+for (const key in inventory) {
+  console.log(`${key}: ${inventory[key]}`);
+}
+```
+
+#### 2. Métodos estáticos de `Object` (los más modernos y recomendados)
+
+Transforman los datos del objeto en arrays, permitiendo usar bucles `for...of` o métodos funcionales (`forEach`, `map`, etc.):
+
+```js
+// Object.keys(): array con los nombres de las propiedades
+console.log(Object.keys(inventory)); // ["apples", "oranges", "bananas"]
+
+// Object.values(): array con los valores
+console.log(Object.values(inventory)); // [5, 12, 8]
+
+// Object.entries(): array de pares [clave, valor] (ideal para desestructurar en un for...of)
+for (const [fruit, amount] of Object.entries(inventory)) {
+  console.log(`Tenemos ${amount} unidades de ${fruit}`);
+}
+```
+
+> **Orden de las propiedades:** Las claves numéricas enteras se ordenan de menor a mayor automáticamente; el resto de claves se iteran en el orden exacto en el que fueron creadas.
+
+Docs: [Object.keys en MDN][object-keys] · [Object.values en MDN][object-values] · [Object.entries en MDN][object-entries]
+
+---
+
+### 9. Funciones como objetos
+
+En JavaScript, las funciones son consideradas **objetos de primera clase** (_first-class citizens_). Además de poder ejecutarse con `()`, internamente son objetos que heredan de `Function.prototype` (y a su vez de `Object.prototype`).
+
+Esto significa que:
+
+1. Tienen **propiedades integradas**:
+   - `fn.name`: el nombre con el que se declaró la función.
+   - `fn.length`: la cantidad de parámetros obligatorios que espera la función.
+2. Tienen **métodos integrados**: como `.toString()`, `.call()`, `.apply()` y `.bind()`.
+3. Puedes **asignarles propiedades personalizadas** como a cualquier otro objeto (muy útil para cachés internas, contadores de ejecuciones o configuración de librerías):
+
+```js
+function makeCounter() {
+  function counter() {
+    counter.count++;
+    return counter.count;
+  }
+
+  // Añadimos una propiedad al propio objeto función
+  counter.count = 0;
+
+  return counter;
+}
+
+const myCounter = makeCounter();
+console.log(myCounter()); // 1
+console.log(myCounter()); // 2
+console.log(`Veces ejecutado: ${myCounter.count}`); // 2
+
+// Inspeccionar propiedades nativas de una función
+function calculateArea(width, height) {
+  return width * height;
+}
+
+console.log(calculateArea.name); // "calculateArea"
+console.log(calculateArea.length); // 2 (espera dos parámetros)
+```
+
+> **Diferencia entre propiedad de función y variable local:**
+> Una propiedad asignada a la función (`counter.count = 0`) no es una variable local; es un atributo accesible desde fuera a través del propio identificador de la función.
+
+Docs: [Objeto función en JavaScript.info][javascript-info-function-object] · [Funciones en MDN][functions]
+
+---
 
 _08-11-2026_
 
@@ -107,7 +440,7 @@ const total = calcTotal(10, 2); // 20, y ahora puedo seguir usándolo
 console.log(total);
 
 function badReturn() {
-  return
+  return;
   42; // nunca se alcanza: devuelve undefined
 }
 ```
@@ -144,11 +477,11 @@ setTimeout(function () {
 }, 1000);
 ```
 
-| Forma                       | Se puede llamar antes de definirla | Úsala cuando...                                       |
-| --------------------------- | ---------------------------------- | ----------------------------------------------------- |
-| Declaración (`function f`)  | sí                                 | es la opción **por defecto**, más fácil de localizar  |
-| Expresión (`const f = function`) | no                            | la función es un valor que vas a pasar o elegir       |
-| Anónima como argumento      | (no tiene nombre)                  | es un callback de un solo uso                         |
+| Forma                            | Se puede llamar antes de definirla | Úsala cuando...                                      |
+| -------------------------------- | ---------------------------------- | ---------------------------------------------------- |
+| Declaración (`function f`)       | sí                                 | es la opción **por defecto**, más fácil de localizar |
+| Expresión (`const f = function`) | no                                 | la función es un valor que vas a pasar o elegir      |
+| Anónima como argumento           | (no tiene nombre)                  | es un callback de un solo uso                        |
 
 Docs: [Expresión de función][operators-function]
 
@@ -260,11 +593,11 @@ products.forEach((product, index) => {
 });
 ```
 
-| Necesito...                        | Uso                                       |
-| ---------------------------------- | ----------------------------------------- |
-| Hacer algo con cada elemento       | `forEach` o `for...of`                    |
-| Parar antes de terminar, o saltar  | `for...of` con `break` / `continue`       |
-| Recorrer un Set o un Map           | `for...of` (el `forEach` de Set/Map existe, pero `for...of` es más uniforme) |
+| Necesito...                       | Uso                                                                          |
+| --------------------------------- | ---------------------------------------------------------------------------- |
+| Hacer algo con cada elemento      | `forEach` o `for...of`                                                       |
+| Parar antes de terminar, o saltar | `for...of` con `break` / `continue`                                          |
+| Recorrer un Set o un Map          | `for...of` (el `forEach` de Set/Map existe, pero `for...of` es más uniforme) |
 
 ### Casos de uso
 
@@ -911,3 +1244,17 @@ Docs: [const][statements-const]
 [javascript-info-function-expressions]: https://es.javascript.info/function-expressions
 [javascript-info-arrow-functions]: https://es.javascript.info/arrow-functions-basics
 [javascript-info-closure]: https://es.javascript.info/closure
+[object]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object
+[object-values]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/values
+[object-assign]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
+[global-structuredclone]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/structuredClone
+[operators-delete]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/delete
+[operators-in]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/in
+[operators-this]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/this
+[operators-property-accessors]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Property_accessors
+[operators-optional-chaining]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining
+[javascript-info-object]: https://es.javascript.info/object
+[javascript-info-object-copy]: https://es.javascript.info/object-copy
+[javascript-info-object-methods]: https://es.javascript.info/object-methods
+[javascript-info-optional-chaining]: https://es.javascript.info/optional-chaining
+[javascript-info-function-object]: https://es.javascript.info/function-object

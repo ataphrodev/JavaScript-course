@@ -40,6 +40,7 @@ javascript/
 | 14  | [14-do-while-exercises.js](src/14-do-while-exercises.js)         | Do-while exercises                 |
 | 15  | [15-for-of-exercises.js](src/15-for-of-exercises.js)             | For-of exercises                   |
 | 16  | [16-functions-exercises.js](src/16-functions-exercises.js)       | Functions exercises                |
+| 17  | [17-objects-exercises.js](src/17-objects-exercises.js)           | Objects exercises                  |
 | 01  | [01-kata-box-office.js](src/01-kata-box-office.js)               | Kata: box office                   |
 | 02  | [02-kata-rpg-combat.js](src/02-kata-rpg-combat.js)               | Kata: rpg combat                   |
 | 03  | [03-kata-user-registration.js](src/03-kata-user-registration.js) | Kata: user registration            |
